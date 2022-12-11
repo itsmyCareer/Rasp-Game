@@ -16,7 +16,33 @@ pos_y = 120
 
 clock = pygame.time.Clock()
 
+class Enemy(object):
+    def __init__(self):
+        self.image = pygame.image.load("images/enemy_resize.png").convert_alpha()
+        self.x = 30
+        self.y = 30
+        self.speed = 1
+        self.direction = 1
+
+    def move(self):
+        global SCREEN_WIDTH
+        self.x += self.speed * self.direction
+
+        if self.x <= 0:
+            self.x=0
+            self.direction = 1
+        
+        if self.x+24 >= SCREEN_WIDTH:
+            
+            self.direction = -1
+    
+    def draw(self):
+        global screen
+        screen.blit(self.image, (self.x, self.y))
+
 def main():
+    enemy = Enemy()
+    playerImage = pygame.image.load("images/player_resize.png").convert_alpha()
     global pos_x, pos_y, SCREEN_HEIGHT, SCREEN_WIDTH
     while True:
         clock.tick(60)
@@ -26,19 +52,28 @@ def main():
 
         key_event = pygame.key.get_pressed()
         if key_event[pygame.K_LEFT]:
-            pos_x -= 1
+            if pos_x > 0:
+                pos_x -= 1
 
         if key_event[pygame.K_RIGHT]:
-            pos_x += 1
+            if pos_x + 18 < SCREEN_WIDTH:
+                pos_x += 1
 
         if key_event[pygame.K_UP]:
-            pos_y -= 1
+            if pos_y > 0:
+                pos_y -= 1
 
         if key_event[pygame.K_DOWN]:
-            pos_y += 1
+            if pos_y + 20 < SCREEN_HEIGHT:
+                pos_y += 1
+ 
 
         screen.fill(black)
-        pygame.draw.circle(screen, white, (pos_x, pos_y), 20)
+
+        enemy.move()
+        enemy.draw()
+
+        screen.blit(playerImage, (pos_x, pos_y))
         pygame.display.update()
 
 if __name__ == "__main__":
